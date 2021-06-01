@@ -1,0 +1,6 @@
+operar[5+5];
+operar[5+5];
+operar[1+1*2];
+operar[-(1+1*6/3-5+7)];
+operar[5+5];
+operar[-(1+1*6/3-5+1*-2)];
