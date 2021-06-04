@@ -2,7 +2,7 @@ class Arbol:
     def __init__(self, instrucciones ):
         self.instrucciones = instrucciones
         self.excepciones = []
-        self.consola = []
+        self.consola = ""
         self.TSglobal = None
 
     def getInstrucciones(self):
@@ -22,6 +22,9 @@ class Arbol:
     
     def setConsola(self, consola):
         self.consola = consola
+
+    def updateConsola(self,cadena):
+        self.consola += str(cadena) + '\n'
 
     def getTSGlobal(self):
         return self.TSglobal
