@@ -20,6 +20,12 @@ tokens  = [
     'PARC',
     'MAS',
     'MENOS',
+    'MENORQUE',
+    'MAYORQUE',
+    'IGUALIGUAL',
+    'AND',
+    'OR',
+    'NOT',
     'DECIMAL',
     'ENTERO',
     'CADENA',
@@ -31,7 +37,13 @@ t_PUNTOCOMA     = r';'
 t_PARA          = r'\('
 t_PARC          = r'\)'
 t_MAS           = r'\+'
-t_MENOS           = r'-'
+t_MENOS         = r'-'
+t_MENORQUE      = r'<'
+t_MAYORQUE      = r'>'
+t_IGUALIGUAL    = r'=='
+t_AND           = r'&&'
+t_OR            = r'\|\|'
+t_NOT           = r'!'
 
 def t_DECIMAL(t):
     r'\d+\.\d+'
@@ -88,7 +100,15 @@ def find_column(inp, token):
 import ply.lex as lex
 lexer = lex.lex()
 
-
+# Asociación de operadores y precedencia
+precedence = (
+    ('left','OR'),
+    ('left','AND'),
+    ('right','UNOT'),
+    ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL'),
+    ('left','MAS','MENOS'),
+    ('right','UMENOS'),
+    )
 
 # Definición de la gramática
 
@@ -96,8 +116,10 @@ lexer = lex.lex()
 from Abstract.Instruccion import Instruccion
 from Instrucciones.Imprimir import Imprimir
 from Expresiones.Primitivos import Primitivos
-from TS.Tipo import OperadorAritmetico, TIPO
+from TS.Tipo import OperadorAritmetico, OperadorLogico, TIPO, OperadorRelacional
 from Expresiones.Aritmetica import Aritmetica
+from Expresiones.Relacional import Relacional
+from Expresiones.Logica import Logica
 
 def p_init(t) :
     'init            : instrucciones'
@@ -140,12 +162,42 @@ def p_expresion_binaria(t):
     '''
     expresion : expresion MAS expresion
             | expresion MENOS expresion
+            | expresion MENORQUE expresion
+            | expresion MAYORQUE expresion
+            | expresion IGUALIGUAL expresion
+            | expresion AND expresion
+            | expresion OR expresion
     '''
     if t[2] == '+':
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '-':
         t[0] = Aritmetica(OperadorAritmetico.MENOS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '<':
+        t[0] = Relacional(OperadorRelacional.MENORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '>':
+        t[0] = Relacional(OperadorRelacional.MAYORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '==':
+        t[0] = Relacional(OperadorRelacional.IGUALIGUAL, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '&&':
+        t[0] = Logica(OperadorLogico.AND, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '||':
+        t[0] = Logica(OperadorLogico.OR, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
 
+def p_expresion_unaria(t):
+    '''
+    expresion : MENOS expresion %prec UMENOS 
+            | NOT expresion %prec UNOT 
+    '''
+    if t[1] == '-':
+        t[0] = Aritmetica(OperadorAritmetico.UMENOS, t[2],None, t.lineno(1), find_column(input, t.slice[1]))
+    elif t[1] == '!':
+        t[0] = Logica(OperadorLogico.NOT, t[2],None, t.lineno(1), find_column(input, t.slice[1]))
+
+def p_expresion_agrupacion(t):
+    '''
+    expresion :   PARA expresion PARC 
+    '''
+    t[0] = t[2]
 
 def p_expresion_entero(t):
     '''expresion : ENTERO'''
