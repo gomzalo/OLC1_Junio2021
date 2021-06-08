@@ -1,5 +1,16 @@
 print(5 + "Hola");
 print(5 + 3+234+324+34+3);
 print(-(500 + 32 - 600));
-print(-(500 - 600) == 100);
+print(-(500 - 600) == 100)
 print(! "7" == 7 && (100 == 10 + 90) );
+int variable = 5 + 5;
+print(variable)
+print(VaRiaBle)
+String cad1 = "Soy una cadena\nUn salto de linea."
+string cad2 = variable + cad1;
+print(cad2)
+print(cad2 + cad1);
+print("-------------------------------")
+print(cad2);
+cad2 = cad2 + cad1;
+print(cad2);

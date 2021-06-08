@@ -30,6 +30,9 @@ class Aritmetica(Instruccion):
             elif self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.CADENA:
                 self.tipo = TIPO.CADENA
                 return str(self.obtenerVal(self.OperacionIzq.tipo, izq)) + self.obtenerVal(self.OperacionDer.tipo, der)
+            elif self.OperacionIzq.tipo == TIPO.CADENA and self.OperacionDer.tipo == TIPO.CADENA:
+                self.tipo = TIPO.CADENA
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) + self.obtenerVal(self.OperacionDer.tipo, der)
             return Excepcion("Semantico", "Tipo Erroneo de operacion para +.", self.fila, self.columna)
 
         elif self.operador == OperadorAritmetico.MENOS: #RESTA
