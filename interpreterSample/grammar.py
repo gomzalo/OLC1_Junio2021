@@ -16,8 +16,10 @@ reservadas = {
     'print'     : 'RPRINT',
     'if'        : 'RIF',
     'else'      : 'RELSE',
+    'while'     : 'RWHILE',
     'true'      : 'RTRUE',
     'false'     : 'RFALSE',
+    'break'     : 'RBREAK',
 }
 
 tokens  = [
@@ -136,6 +138,8 @@ from Instrucciones.Declaracion import Declaracion
 from Expresiones.Identificador import Identificador
 from Instrucciones.Asignacion import Asignacion
 from Instrucciones.If import If
+from Instrucciones.While import While
+from Instrucciones.Break import Break
 
 def p_init(t) :
     'init            : instrucciones'
@@ -162,7 +166,9 @@ def p_instruccion(t) :
     '''instruccion      : imprimir_instr finins
                         | declaracion_instr finins
                         | asignacion_instr finins
-                        | if_instr'''
+                        | if_instr
+                        | while_instr
+                        | break_instr finins'''
     t[0] = t[1]
 
 def p_finins(t) :
@@ -205,6 +211,18 @@ def p_if2(t) :
 def p_if3(t) :
     'if_instr     : RIF PARA expresion PARC LLAVEA instrucciones LLAVEC RELSE if_instr'
     t[0] = If(t[3], t[6], None, t[9], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////WHILE//////////////////////////////////////////////////
+
+def p_while(t) :
+    'while_instr     : RWHILE PARA expresion PARC LLAVEA instrucciones LLAVEC'
+    t[0] = While(t[3], t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////BREAK//////////////////////////////////////////////////
+
+def p_break(t) :
+    'break_instr     : RBREAK'
+    t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////TIPO//////////////////////////////////////////////////
 
@@ -329,5 +347,11 @@ for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES
     if isinstance(value, Excepcion) :
         ast.getExcepciones().append(value)
         ast.updateConsola(value.toString())
+    if isinstance(value, Break): 
+        err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+        ast.getExcepciones().append(err)
+        ast.updateConsola(err.toString())
+        
+    
 
 print(ast.getConsola())
