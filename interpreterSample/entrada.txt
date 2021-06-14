@@ -1,67 +1,72 @@
-print(5 + "Hola");
-print(5 + 3+234+324+34+3);
-print(-(500 + 32 - 600));
-print(-(500 - 600) == 100)
-print(! "7" == 7 && (100 == 10 + 90) );
-int variable = 5 + 5;
-print(variable)
-print(VaRiaBle)
-String cad1 = "Soy una cadena\nUn salto de linea."
-string cad2 = variable + cad1;
-print(cad2)
-print(cad2 + cad1);
-print("-------------------------------")
-print(cad2);
-cad2 = cad2 + cad1;
-print(cad2);
-print(true || false)
-print(false)
-int bandera = 100;
-if((5+5)<(2+1)){
-    print("Entra al if");
-}
-else if(bandera + 50 > 300){
-    print("Entro al else if xd")
-}
-else if(false){
-    print("Entro al else if xddddd")
-}
-else if(bandera + 50 > 300){
-    print("Entro al else if xd")
-}
-else{
-    if(bandera - 100 == 0){
-        print("Entro a un if en un else que loko :0")
+
+int valor1 = 43243;
+
+main(){
+    print(valor1)
+    print(5 + "Hola");
+    print(5 + 3+234+324+34+3);
+    print(-(500 + 32 - 600));
+    print(-(500 - 600) == 100)
+    print(! "7" == 7 && (100 == 10 + 90) );
+    int variable = 5 + 5;
+    print(variable)
+    print(VaRiaBle)
+    String cad1 = "Soy una cadena\nUn salto de linea."
+    string cad2 = variable + cad1;
+    print(cad2)
+    print(cad2 + cad1);
+    print("-------------------------------")
+    print(cad2);
+    cad2 = cad2 + cad1;
+    print(cad2);
+    print(true || false)
+    print(false)
+    int bandera = 100;
+    if((5+5)<(2+1)){
+        print("Entra al if");
+    }
+    else if(bandera + 50 > 300){
+        print("Entro al else if xd")
+    }
+    else if(false){
+        print("Entro al else if xddddd")
+    }
+    else if(bandera + 50 > 300){
+        print("Entro al else if xd")
+    }
+    else{
         if(bandera - 100 == 0){
             print("Entro a un if en un else que loko :0")
-            print(bandera)
-            print("Cambio de bandera")
-            int bandera = 50;
-            print(bandera)
             if(bandera - 100 == 0){
                 print("Entro a un if en un else que loko :0")
+                print(bandera)
+                print("Cambio de bandera")
+                int bandera = 50;
+                print(bandera)
+                if(bandera - 100 == 0){
+                    print("Entro a un if en un else que loko :0")
+                }
             }
+            print("valor persistente")
+            print(bandera)
         }
-        print("valor persistente")
-        print(bandera)
+        print("No entro a ningun if D:")
     }
-    print("No entro a ningun if D:")
-}
 
-int num = 0;
-while(num < 10){
-    print("Iteracion -> " + (num + 1))
-    if(num == 7){
-        break;
+    int num = 0;
+    while(num < 10){
+        print("Iteracion -> " + (num + 1))
+        if(num == 7){
+            break;
+        }
+        num = num + 1;
     }
-    num = num + 1;
-}
-break;
-num = 0;
-while(num < 10){
-    print("Iteracion -> " + (num + 1))
-    if(num == 5){
-        break;
+    break;
+    num = 0;
+    while(num < 10){
+        print("Iteracion -> " + (num + 1))
+        num = num + 1;
     }
-    num = num + 1;
+
+    
 }

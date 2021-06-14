@@ -20,6 +20,7 @@ reservadas = {
     'true'      : 'RTRUE',
     'false'     : 'RFALSE',
     'break'     : 'RBREAK',
+    'main'      : 'RMAIN',
 }
 
 tokens  = [
@@ -140,6 +141,7 @@ from Instrucciones.Asignacion import Asignacion
 from Instrucciones.If import If
 from Instrucciones.While import While
 from Instrucciones.Break import Break
+from Instrucciones.Main import Main
 
 def p_init(t) :
     'init            : instrucciones'
@@ -168,7 +170,8 @@ def p_instruccion(t) :
                         | asignacion_instr finins
                         | if_instr
                         | while_instr
-                        | break_instr finins'''
+                        | break_instr finins
+                        | main_instr'''
     t[0] = t[1]
 
 def p_finins(t) :
@@ -223,6 +226,12 @@ def p_while(t) :
 def p_break(t) :
     'break_instr     : RBREAK'
     t[0] = Break(t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////MAIN//////////////////////////////////////////////////
+
+def p_main(t) :
+    'main_instr     : RMAIN PARA PARC LLAVEA instrucciones LLAVEC'
+    t[0] = Main(t[5], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////TIPO//////////////////////////////////////////////////
 
@@ -291,19 +300,19 @@ def p_expresion_entero(t):
     '''expresion : ENTERO'''
     t[0] = Primitivos(TIPO.ENTERO,t[1], t.lineno(1), find_column(input, t.slice[1]))
 
-def p_primitivo_decimal(t):
+def p_expresion_decimal(t):
     '''expresion : DECIMAL'''
     t[0] = Primitivos(TIPO.DECIMAL, t[1], t.lineno(1), find_column(input, t.slice[1]))
 
-def p_primitivo_cadena(t):
+def p_expresion_cadena(t):
     '''expresion : CADENA'''
     t[0] = Primitivos(TIPO.CADENA,str(t[1]).replace('\\n', '\n'), t.lineno(1), find_column(input, t.slice[1]))
 
-def p_primitivo_true(t):
+def p_expresion_true(t):
     '''expresion : RTRUE'''
     t[0] = Primitivos(TIPO.BOOLEANO, True, t.lineno(1), find_column(input, t.slice[1]))
 
-def p_primitivo_false(t):
+def p_expresion_false(t):
     '''expresion : RFALSE'''
     t[0] = Primitivos(TIPO.BOOLEANO, False, t.lineno(1), find_column(input, t.slice[1]))
 
@@ -342,16 +351,39 @@ for error in errores:                   #CAPTURA DE ERRORES LEXICOS Y SINTACTICO
     ast.getExcepciones().append(error)
     ast.updateConsola(error.toString())
 
-for instruccion in ast.getInstrucciones():      # REALIZAR LAS ACCIONES
-    value = instruccion.interpretar(ast,TSGlobal)
-    if isinstance(value, Excepcion) :
-        ast.getExcepciones().append(value)
-        ast.updateConsola(value.toString())
-    if isinstance(value, Break): 
-        err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+for instruccion in ast.getInstrucciones():      # 1ERA PASADA (DECLARACIONES Y ASIGNACIONES)
+    if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
+        value = instruccion.interpretar(ast,TSGlobal)
+        if isinstance(value, Excepcion) :
+            ast.getExcepciones().append(value)
+            ast.updateConsola(value.toString())
+        if isinstance(value, Break): 
+            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+            ast.getExcepciones().append(err)
+            ast.updateConsola(err.toString())
+        
+for instruccion in ast.getInstrucciones():      # 2DA PASADA (MAIN)
+    contador = 0
+    if isinstance(instruccion, Main):
+        contador += 1
+        if contador == 2: # VERIFICAR LA DUPLICIDAD
+            err = Excepcion("Semantico", "Existen 2 funciones Main", instruccion.fila, instruccion.columna)
+            ast.getExcepciones().append(err)
+            ast.updateConsola(err.toString())
+            break
+        value = instruccion.interpretar(ast,TSGlobal)
+        if isinstance(value, Excepcion) :
+            ast.getExcepciones().append(value)
+            ast.updateConsola(value.toString())
+        if isinstance(value, Break): 
+            err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+            ast.getExcepciones().append(err)
+            ast.updateConsola(err.toString())
+
+for instruccion in ast.getInstrucciones():    
+    if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion)):
+        err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
         ast.getExcepciones().append(err)
         ast.updateConsola(err.toString())
-        
-    
 
 print(ast.getConsola())
