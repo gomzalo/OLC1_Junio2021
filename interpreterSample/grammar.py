@@ -21,6 +21,7 @@ reservadas = {
     'false'     : 'RFALSE',
     'break'     : 'RBREAK',
     'main'      : 'RMAIN',
+    'func'      : 'RFUNC',
 }
 
 tokens  = [
@@ -142,6 +143,8 @@ from Instrucciones.If import If
 from Instrucciones.While import While
 from Instrucciones.Break import Break
 from Instrucciones.Main import Main
+from Instrucciones.Funcion import Funcion
+from Instrucciones.Llamada import Llamada
 
 def p_init(t) :
     'init            : instrucciones'
@@ -171,7 +174,9 @@ def p_instruccion(t) :
                         | if_instr
                         | while_instr
                         | break_instr finins
-                        | main_instr'''
+                        | main_instr
+                        | funcion_instr
+                        | llamada_instr finins'''
     t[0] = t[1]
 
 def p_finins(t) :
@@ -232,6 +237,18 @@ def p_break(t) :
 def p_main(t) :
     'main_instr     : RMAIN PARA PARC LLAVEA instrucciones LLAVEC'
     t[0] = Main(t[5], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////FUNCION//////////////////////////////////////////////////
+
+def p_funcion(t) :
+    'funcion_instr     : RFUNC ID PARA PARC LLAVEA instrucciones LLAVEC'
+    t[0] = Funcion(t[2], t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////LLAMADA A FUNCION//////////////////////////////////////////////////
+
+def p_llamada(t) :
+    'llamada_instr     : ID PARA PARC'
+    t[0] = Llamada(t[1], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////TIPO//////////////////////////////////////////////////
 
@@ -343,15 +360,17 @@ entrada = f.read()
 from TS.Arbol import Arbol
 from TS.TablaSimbolos import TablaSimbolos
 
-instrucciones = parse(entrada.lower()) #ARBOL AST
+instrucciones = parse(entrada.lower()) # ARBOL AST
 ast = Arbol(instrucciones)
 TSGlobal = TablaSimbolos()
 ast.setTSglobal(TSGlobal)
-for error in errores:                   #CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
+for error in errores:                   # CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
     ast.getExcepciones().append(error)
     ast.updateConsola(error.toString())
 
 for instruccion in ast.getInstrucciones():      # 1ERA PASADA (DECLARACIONES Y ASIGNACIONES)
+    if isinstance(instruccion, Funcion):
+        ast.addFuncion(instruccion)     # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
     if isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion):
         value = instruccion.interpretar(ast,TSGlobal)
         if isinstance(value, Excepcion) :
@@ -380,8 +399,8 @@ for instruccion in ast.getInstrucciones():      # 2DA PASADA (MAIN)
             ast.getExcepciones().append(err)
             ast.updateConsola(err.toString())
 
-for instruccion in ast.getInstrucciones():    
-    if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion)):
+for instruccion in ast.getInstrucciones():    # 3ERA PASADA (SENTENCIAS FUERA DE MAIN)
+    if not (isinstance(instruccion, Main) or isinstance(instruccion, Declaracion) or isinstance(instruccion, Asignacion) or isinstance(instruccion, Funcion)):
         err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
         ast.getExcepciones().append(err)
         ast.updateConsola(err.toString())

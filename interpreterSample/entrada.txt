@@ -1,7 +1,16 @@
 
 int valor1 = 43243;
 
+func HolaMundo(){
+    print("HolaMundo");
+}
+
+
+
 main(){
+    HolaMundo();
+    print(valor1);
+    HolaMundo2();
     print(valor1)
     print(5 + "Hola");
     print(5 + 3+234+324+34+3);
@@ -67,6 +76,9 @@ main(){
         print("Iteracion -> " + (num + 1))
         num = num + 1;
     }
+}
 
-    
+func HolaMundo2(){
+    print("HolaMundo2");
+    print(5 + 3+234+324+34+3);
 }
