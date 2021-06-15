@@ -30,6 +30,7 @@ tokens  = [
     'PARC',
     'LLAVEA',
     'LLAVEC',
+    'COMA',
     'MAS',
     'MENOS',
     'MENORQUE',
@@ -51,6 +52,7 @@ t_PARA          = r'\('
 t_PARC          = r'\)'
 t_LLAVEA        = r'{'
 t_LLAVEC        = r'}'
+t_COMA          = r','
 t_MAS           = r'\+'
 t_MENOS         = r'-'
 t_MENORQUE      = r'<'
@@ -240,15 +242,57 @@ def p_main(t) :
 
 #///////////////////////////////////////FUNCION//////////////////////////////////////////////////
 
-def p_funcion(t) :
+def p_funcion_1(t) :
+    'funcion_instr     : RFUNC ID PARA parametros PARC LLAVEA instrucciones LLAVEC'
+    t[0] = Funcion(t[2], t[4], t[7], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_funcion_2(t) :
     'funcion_instr     : RFUNC ID PARA PARC LLAVEA instrucciones LLAVEC'
-    t[0] = Funcion(t[2], t[6], t.lineno(1), find_column(input, t.slice[1]))
+    t[0] = Funcion(t[2], [], t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////PARAMETROS//////////////////////////////////////////////////
+
+def p_parametros_1(t) :
+    'parametros     : parametros COMA parametro'
+    t[1].append(t[3])
+    t[0] = t[1]
+    
+def p_parametros_2(t) :
+    'parametros    : parametro'
+    t[0] = [t[1]]
+
+#///////////////////////////////////////PARAMETRO//////////////////////////////////////////////////
+
+def p_parametro(t) :
+    'parametro     : tipo ID'
+    t[0] = {'tipo':t[1],'identificador':t[2]}
 
 #///////////////////////////////////////LLAMADA A FUNCION//////////////////////////////////////////////////
 
-def p_llamada(t) :
+def p_llamada1(t) :
     'llamada_instr     : ID PARA PARC'
-    t[0] = Llamada(t[1], t.lineno(1), find_column(input, t.slice[1]))
+    t[0] = Llamada(t[1], [], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_llamada2(t) :
+    'llamada_instr     : ID PARA parametros_llamada PARC'
+    t[0] = Llamada(t[1], t[3], t.lineno(1), find_column(input, t.slice[1]))
+
+#///////////////////////////////////////PARAMETROS LLAMADA A FUNCION//////////////////////////////////////////////////
+
+def p_parametrosLL_1(t) :
+    'parametros_llamada     : parametros_llamada COMA parametro_llamada'
+    t[1].append(t[3])
+    t[0] = t[1]
+    
+def p_parametrosLL_2(t) :
+    'parametros_llamada    : parametro_llamada'
+    t[0] = [t[1]]
+
+#///////////////////////////////////////PARAMETRO LLAMADA A FUNCION//////////////////////////////////////////////////
+
+def p_parametroLL(t) :
+    'parametro_llamada     : expresion'
+    t[0] = t[1]
 
 #///////////////////////////////////////TIPO//////////////////////////////////////////////////
 

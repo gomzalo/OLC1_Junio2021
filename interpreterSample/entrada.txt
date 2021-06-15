@@ -10,7 +10,7 @@ func HolaMundo(){
 main(){
     HolaMundo();
     print(valor1);
-    HolaMundo2();
+    HolaMundo2("Compi 1 :0");
     print(valor1)
     print(5 + "Hola");
     print(5 + 3+234+324+34+3);
@@ -76,9 +76,18 @@ main(){
         print("Iteracion -> " + (num + 1))
         num = num + 1;
     }
+    suma(234, 32);
+    suma5(1, 2,3,4,5);
 }
 
-func HolaMundo2(){
-    print("HolaMundo2");
-    print(5 + 3+234+324+34+3);
+func HolaMundo2(string val){
+    print("HolaMundo2 " + val);
+}
+
+func Suma(int a, int b){
+    print("La suma de " + a + " + " + b + " es igual a: " + ( a + b ));
+}
+
+func Suma5(int a, int b, int c, int d, int e){
+    print("La suma de " + a + " + " + b + " + " + c + " + " + d + " + " + e + " es igual a: " + ( a + b + c + d + e ));
 }
