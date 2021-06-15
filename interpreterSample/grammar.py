@@ -301,13 +301,13 @@ def p_tipo(t) :
                 | RFLOAT
                 | RSTRING
                 | RBOOLEAN '''
-    if t[1] == 'int':
+    if t[1].lower() == 'int':
         t[0] = TIPO.ENTERO
-    elif t[1] == 'float':
+    elif t[1].lower() == 'float':
         t[0] = TIPO.DECIMAL
-    elif t[1] == 'string':
+    elif t[1].lower() == 'string':
         t[0] = TIPO.CADENA
-    elif t[1] == 'boolean':
+    elif t[1].lower() == 'boolean':
         t[0] = TIPO.BOOLEANO
 
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
@@ -404,7 +404,7 @@ entrada = f.read()
 from TS.Arbol import Arbol
 from TS.TablaSimbolos import TablaSimbolos
 
-instrucciones = parse(entrada.lower()) # ARBOL AST
+instrucciones = parse(entrada) # ARBOL AST
 ast = Arbol(instrucciones)
 TSGlobal = TablaSimbolos()
 ast.setTSglobal(TSGlobal)

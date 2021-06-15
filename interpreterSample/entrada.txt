@@ -1,5 +1,5 @@
 
-int valor1 = 43243;
+iNt valor1 = 43243;
 
 func HolaMundo(){
     print("HolaMundo");
