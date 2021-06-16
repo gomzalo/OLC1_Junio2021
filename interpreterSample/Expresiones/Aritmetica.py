@@ -44,6 +44,12 @@ class Aritmetica(Instruccion):
                 return self.obtenerVal(self.OperacionIzq.tipo, izq) - self.obtenerVal(self.OperacionDer.tipo, der)
             return Excepcion("Semantico", "Tipo Erroneo de operacion para -.", self.fila, self.columna)
 
+        elif self.operador == OperadorAritmetico.POR: #MULTIPLICACION
+            if self.OperacionIzq.tipo == TIPO.ENTERO and self.OperacionDer.tipo == TIPO.ENTERO:
+                self.tipo = TIPO.ENTERO
+                return self.obtenerVal(self.OperacionIzq.tipo, izq) * self.obtenerVal(self.OperacionDer.tipo, der)
+            return Excepcion("Semantico", "Tipo Erroneo de operacion para *.", self.fila, self.columna)
+
         elif self.operador == OperadorAritmetico.UMENOS: #NEGACION UNARIA
             if self.OperacionIzq.tipo == TIPO.ENTERO:
                 self.tipo = TIPO.ENTERO

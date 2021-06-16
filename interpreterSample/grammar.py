@@ -22,6 +22,7 @@ reservadas = {
     'break'     : 'RBREAK',
     'main'      : 'RMAIN',
     'func'      : 'RFUNC',
+    'return'    : 'RRETURN',
 }
 
 tokens  = [
@@ -33,6 +34,7 @@ tokens  = [
     'COMA',
     'MAS',
     'MENOS',
+    'POR',
     'MENORQUE',
     'MAYORQUE',
     'IGUALIGUAL',
@@ -55,6 +57,7 @@ t_LLAVEC        = r'}'
 t_COMA          = r','
 t_MAS           = r'\+'
 t_MENOS         = r'-'
+t_POR           = r'\*'
 t_MENORQUE      = r'<'
 t_MAYORQUE      = r'>'
 t_IGUALIGUAL    = r'=='
@@ -125,6 +128,7 @@ precedence = (
     ('right','UNOT'),
     ('left','MENORQUE','MAYORQUE', 'IGUALIGUAL'),
     ('left','MAS','MENOS'),
+    ('left','POR'),
     ('right','UMENOS'),
     )
 
@@ -147,6 +151,7 @@ from Instrucciones.Break import Break
 from Instrucciones.Main import Main
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
+from Instrucciones.Return import Return
 
 def p_init(t) :
     'init            : instrucciones'
@@ -178,7 +183,8 @@ def p_instruccion(t) :
                         | break_instr finins
                         | main_instr
                         | funcion_instr
-                        | llamada_instr finins'''
+                        | llamada_instr finins
+                        | return_instr finins'''
     t[0] = t[1]
 
 def p_finins(t) :
@@ -294,6 +300,12 @@ def p_parametroLL(t) :
     'parametro_llamada     : expresion'
     t[0] = t[1]
 
+#///////////////////////////////////////LLAMADA A FUNCION//////////////////////////////////////////////////
+
+def p_return(t) :
+    'return_instr     : RRETURN expresion'
+    t[0] = Return(t[2], t.lineno(1), find_column(input, t.slice[1]))
+
 #///////////////////////////////////////TIPO//////////////////////////////////////////////////
 
 def p_tipo(t) :
@@ -316,6 +328,7 @@ def p_expresion_binaria(t):
     '''
     expresion : expresion MAS expresion
             | expresion MENOS expresion
+            | expresion POR expresion
             | expresion MENORQUE expresion
             | expresion MAYORQUE expresion
             | expresion IGUALIGUAL expresion
@@ -326,6 +339,8 @@ def p_expresion_binaria(t):
         t[0] = Aritmetica(OperadorAritmetico.MAS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '-':
         t[0] = Aritmetica(OperadorAritmetico.MENOS, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[2] == '*':
+        t[0] = Aritmetica(OperadorAritmetico.POR, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '<':
         t[0] = Relacional(OperadorRelacional.MENORQUE, t[1],t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[2] == '>':
@@ -352,6 +367,10 @@ def p_expresion_agrupacion(t):
     expresion :   PARA expresion PARC 
     '''
     t[0] = t[2]
+
+def p_expresion_llamada(t):
+    '''expresion : llamada_instr'''
+    t[0] = t[1]
 
 def p_expresion_identificador(t):
     '''expresion : ID'''
@@ -440,6 +459,10 @@ for instruccion in ast.getInstrucciones():      # 2DA PASADA (MAIN)
             ast.updateConsola(value.toString())
         if isinstance(value, Break): 
             err = Excepcion("Semantico", "Sentencia BREAK fuera de ciclo", instruccion.fila, instruccion.columna)
+            ast.getExcepciones().append(err)
+            ast.updateConsola(err.toString())
+        if isinstance(value, Return): 
+            err = Excepcion("Semantico", "Sentencia RETURN fuera de ciclo", instruccion.fila, instruccion.columna)
             ast.getExcepciones().append(err)
             ast.updateConsola(err.toString())
 

@@ -1,3 +1,4 @@
+from Instrucciones.Return import Return
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -25,6 +26,7 @@ class While(Instruccion):
                             tree.getExcepciones().append(result)
                             tree.updateConsola(result.toString())
                         if isinstance(result, Break): return None
+                        if isinstance(result, Return): return result
                 else:
                     break
             else:

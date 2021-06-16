@@ -17,12 +17,12 @@ class Llamada(Instruccion):
         result = tree.getFuncion(self.nombre.lower()) ## OBTENER LA FUNCION
         if result == None: # NO SE ENCONTRO LA FUNCION
             return Excepcion("Semantico", "NO SE ENCONTRO LA FUNCION: " + self.nombre, self.fila, self.columna)
-        nuevaTabla = TablaSimbolos(table)
+        nuevaTabla = TablaSimbolos(tree.getTSGlobal())
         # OBTENER PARAMETROS
         if len(result.parametros) == len(self.parametros): #LA CANTIDAD DE PARAMETROS ES LA ADECUADA
             contador=0
             for expresion in self.parametros: # SE OBTIENE EL VALOR DEL PARAMETRO EN LA LLAMADA
-                resultExpresion = expresion.interpretar(tree, nuevaTabla)
+                resultExpresion = expresion.interpretar(tree, table)
                 if isinstance(resultExpresion, Excepcion): return resultExpresion
 
                 if result.parametros[contador]["tipo"] == expresion.tipo:  # VERIFICACION DE TIPO
