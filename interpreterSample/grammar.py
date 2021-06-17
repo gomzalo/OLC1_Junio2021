@@ -4,6 +4,8 @@ VACACIONES DE JUNIO 2020
 
 INTERPRETER SAMPLE  
 '''
+from Nativas.ToLower import ToLower
+from Nativas.ToUpper import ToUpper
 import re
 from TS.Excepcion import Excepcion
 
@@ -415,6 +417,21 @@ def parse(inp) :
     input = inp
     return parser.parse(inp)
 
+def crearNativas(ast):          # CREACION Y DECLARACION DE LAS FUNCIONES NATIVAS
+    nombre = "toupper"
+    parametros = [{'tipo':TIPO.CADENA,'identificador':'toUpper##Param1'}]
+    instrucciones = []
+    toUpper = ToUpper(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(toUpper)     # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+    
+    nombre = "tolower"
+    parametros = [{'tipo':TIPO.CADENA,'identificador':'toLower##Param1'}]
+    instrucciones = []
+    toLower = ToLower(nombre, parametros, instrucciones, -1, -1)
+    ast.addFuncion(toLower)     # GUARDAR LA FUNCION EN "MEMORIA" (EN EL ARBOL)
+
+
 #INTERFAZ
 
 f = open("./entrada.txt", "r")
@@ -427,6 +444,7 @@ instrucciones = parse(entrada) # ARBOL AST
 ast = Arbol(instrucciones)
 TSGlobal = TablaSimbolos()
 ast.setTSglobal(TSGlobal)
+crearNativas(ast)
 for error in errores:                   # CAPTURA DE ERRORES LEXICOS Y SINTACTICOS
     ast.getExcepciones().append(error)
     ast.updateConsola(error.toString())

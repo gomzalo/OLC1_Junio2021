@@ -83,6 +83,11 @@ main(){
     print(suma);
     print(ackermann(3,4))
     pRiNT(contadora);
+    StrinG cadenita = "Esta es uNa CadeNa Normalita :d"
+    String mayus = toUpper(cadenita)
+    string ToLower = ToLower(cadenita)
+    print(mayus)
+    print(ToLower)
 }
 
 func HolaMundo2(string val){
