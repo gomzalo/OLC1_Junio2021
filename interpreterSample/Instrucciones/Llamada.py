@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from TS.Simbolo import Simbolo
 from Instrucciones.Funcion import Funcion
 from Abstract.Instruccion import Instruccion
@@ -44,3 +45,12 @@ class Llamada(Instruccion):
         self.tipo = result.tipo
         
         return value
+
+    def getNodo(self):
+        nodo = NodoAST("LLAMADA A FUNCION")
+        nodo.agregarHijo(str(self.nombre))
+        parametros = NodoAST("PARAMETROS")
+        for param in self.parametros:
+            parametros.agregarHijoNodo(param.getNodo())
+        nodo.agregarHijoNodo(parametros)
+        return nodo

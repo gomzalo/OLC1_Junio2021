@@ -4,6 +4,8 @@ VACACIONES DE JUNIO 2020
 
 INTERPRETER SAMPLE  
 '''
+import os
+from Abstract.NodoAST import NodoAST
 from Nativas.ToLower import ToLower
 from Nativas.ToUpper import ToUpper
 import re
@@ -25,6 +27,7 @@ reservadas = {
     'main'      : 'RMAIN',
     'func'      : 'RFUNC',
     'return'    : 'RRETURN',
+    'read'      : 'RREAD'
 }
 
 tokens  = [
@@ -154,6 +157,8 @@ from Instrucciones.Main import Main
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
 from Instrucciones.Return import Return
+from Expresiones.Read import Read
+from Expresiones.Casteo import Casteo
 
 def p_init(t) :
     'init            : instrucciones'
@@ -398,6 +403,14 @@ def p_expresion_false(t):
     '''expresion : RFALSE'''
     t[0] = Primitivos(TIPO.BOOLEANO, False, t.lineno(1), find_column(input, t.slice[1]))
 
+def p_expresion_read(t):
+    '''expresion : RREAD PARA PARC'''
+    t[0] = Read(t.lineno(1), find_column(input, t.slice[1]))
+
+def p_expresion_cast(t):
+    '''expresion : PARA tipo PARC expresion'''
+    t[0] = Casteo(t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
+
 import ply.yacc as yacc
 parser = yacc.yacc()
 
@@ -489,5 +502,21 @@ for instruccion in ast.getInstrucciones():    # 3ERA PASADA (SENTENCIAS FUERA DE
         err = Excepcion("Semantico", "Sentencias fuera de Main", instruccion.fila, instruccion.columna)
         ast.getExcepciones().append(err)
         ast.updateConsola(err.toString())
+
+init = NodoAST("RAIZ")
+instr = NodoAST("INSTRUCCIONES")
+
+for instruccion in ast.getInstrucciones():
+    instr.agregarHijoNodo(instruccion.getNodo())
+
+init.agregarHijoNodo(instr)
+grafo = ast.getDot(init) #DEVUELVE EL CODIGO GRAPHVIZ DEL AST
+
+dirname = os.path.dirname(__file__)
+direcc = os.path.join(dirname, 'ast.dot')
+arch = open(direcc, "w+")
+arch.write(grafo)
+arch.close()
+os.system('dot -T pdf -o ast.pdf ast.dot')
 
 print(ast.getConsola())

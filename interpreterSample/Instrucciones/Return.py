@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from Abstract.Instruccion import Instruccion
 from TS.Excepcion import Excepcion
 from TS.Tipo import TIPO
@@ -19,3 +20,10 @@ class Return(Instruccion):
         self.result = result            #VALOR DEL RESULT
 
         return self
+
+    def getNodo(self):
+        nodo = NodoAST("RETURN")
+
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+
+        return nodo

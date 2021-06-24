@@ -1,3 +1,4 @@
+from Abstract.NodoAST import NodoAST
 from TS.Excepcion import Excepcion
 from Abstract.Instruccion import Instruccion
 
@@ -18,3 +19,8 @@ class Identificador(Instruccion):
         self.tipo = simbolo.getTipo()
         
         return simbolo.getValor()
+
+    def getNodo(self):
+        nodo = NodoAST("IDENTIFICADOR")
+        nodo.agregarHijo(str(self.identificador))
+        return nodo
