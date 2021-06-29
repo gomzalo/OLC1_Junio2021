@@ -6,9 +6,13 @@ func HolaMundo(){
     print("HolaMundo");
 }
 
-
+int[ ][] [  ] arr1 = new int[4][2][6];
+arr1[1][1][1] = 0
+arr1[arr1[1][1][1]][arr1[1][1][1]][arr1[1][1][1]] = 1000 
 
 main(){
+    print("Posicion del arreglo 1 en la [0][0][0]: " + arr1[0][0][0]);
+    print("Posicion del arreglo 1 en la [1][1][1]: " + arr1[1][1][1]);
     HolaMundo();
     print(valor1);
     HolaMundo2("Compi 1 :0");
@@ -102,11 +106,7 @@ main(){
         print("----------------");
     }
 
-    
-
-    int num1 = (int) Read();
-
-    print(num1 + 100);
+    int[ ] arr1 = new int[4];
 
 }
 
