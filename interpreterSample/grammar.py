@@ -10,6 +10,9 @@ from Nativas.ToLower import ToLower
 from Nativas.ToUpper import ToUpper
 import re
 from TS.Excepcion import Excepcion
+import sys
+
+sys.setrecursionlimit(3000)
 
 errores = []
 reservadas = {

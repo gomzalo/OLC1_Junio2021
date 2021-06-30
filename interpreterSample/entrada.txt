@@ -107,6 +107,7 @@ main(){
     }
 
     int[ ] arr1 = new int[4];
+    print(ackermann(3,5));
 
 }
 
